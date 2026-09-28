@@ -1,0 +1,51 @@
+[project]
+name = "cmn-c1-127"
+version = "1.0.0"
+description = "MultiFormatDocumentParsingAgent — AgentCore Template (Cat 1, CMN)"
+requires-python = ">=3.11"
+# framework.* / shared.* resolve via the CI include (scaffold) — no SDK dependency here.
+dependencies = [
+    "agenticstar-agentcore[marketplace,openai]==1.0.3",]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.1.1",
+    "pytest-cov==5.0.0",
+    "pytest-asyncio==0.23.6",
+    "ruff==0.4.4",
+    "mypy==1.10.0",
+]
+
+[build-system]
+requires = ["setuptools==68.2.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["src"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.mypy]
+# MYPY-UNTYPED-WHEEL — temporary. The AgentCore wheel ships no py.typed marker, so
+# mypy resolves every framework symbol to Any. disallow_subclassing_any must be relaxed
+# in this package's own checked context: an override scoped to the imported modules
+# cannot suppress the error, which is raised where this package declares the subclass.
+# Every other strict setting stays on. Remove once the wheel ships real type information.
+python_version = "3.11"
+
+disallow_subclassing_any = false
+[[tool.mypy.overrides]]
+# framework.*/shared.* ship without a py.typed marker; mineru is an optional
+# runtime engine deliberately not installed in CI (presence-checked at deploy time).
+module = ["framework.*", "shared.*", "mineru", "mineru.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[[tool.mypy.overrides]]
+module = ["framework.*", "shared.*"]
+ignore_missing_imports = true

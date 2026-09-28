@@ -1,0 +1,5 @@
+# Runtime parameters.
+# Moved out of the legacy agent.yaml `agent.config` block.
+
+max_retry: 2
+timeout_seconds: 60

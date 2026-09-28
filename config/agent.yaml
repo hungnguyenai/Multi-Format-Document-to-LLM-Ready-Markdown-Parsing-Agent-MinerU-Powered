@@ -1,0 +1,33 @@
+# Static manifest — read by AgentRegistry at deployment time (single manifest).
+# Root-level keys only — do NOT nest under an `agent:` block.
+id: "CMN-C1-127"
+name: "MultiFormatDocumentParsingAgent"
+namespace: "cmn-c1-127"
+version: "1.0.0"
+enabled: true
+category: "Cat 1"
+# Static generation contract. Absent declarations default to deterministic.
+generation_mode: "llm"  # deterministic | llm
+industry: "CMN"
+base_type: "VectorRAGAgent"
+class: "src.graph.graph.MultiFormatDocumentParsingAgent"
+# Documents are caller-supplied enterprise content (S-1): verified external trust.
+required_trust_level: "VERIFIED_EXTERNAL"
+
+# Deploy-time requirements (validated by the registry).
+# Inline lists on purpose: check_manifest_schema.py parses only this form and
+# reports a block list (`- item` on following lines) as not declared at all.
+#
+# Azure OpenAI rather than Anthropic: the registered environment supplies
+# AZURE_OPENAI_API_KEY / _ENDPOINT / _DEPLOYMENT, and the image ships the `openai`
+# extra — langchain_anthropic is not installed, so the previous declaration named
+# a client that could not be imported. src/services/llm_factory.py builds the
+# client from these keys at invocation time, because the Marketplace entry point
+# injects no client and a node that only accepted one never ran its LLM path.
+requires:
+  secrets: ["AZURE_OPENAI_API_KEY", "AZURE_OPENAI_ENDPOINT", "AZURE_OPENAI_DEPLOYMENT"]
+  extras: ["openai"]
+
+# Runtime parameters (max_retry, timeout_seconds) live in config/config.yaml —
+# AgentRegistry loads that file separately and passes it as Graph(config=...).
+# Do NOT put them here.

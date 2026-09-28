@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+.ruff_cache/
+.pytest_cache/
+*.egg-info/
+CLAUDE.md
+STG_RUNBOOK.md
+DEV_CREDENTIAL_PROVISIONING.md
+security_rules/
+MANIFEST.md
